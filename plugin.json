@@ -1,0 +1,32 @@
+{
+  "type": "panel",
+  "name": "Cal-HeatMap",
+  "id": "neocat-cal-heatmap-panel",
+
+  "info": {
+    "description": "Cal-HeatMap panel for Grafana",
+    "author": {
+      "name": "NeoCat",
+      "url": "http://github.com/NeoCat/"
+    },
+    "keywords": ["calendar", "heatmap", "panel"],
+    "links": [
+      {"name": "GitHub", "url": "https://github.com/NeoCat/grafana-cal-heatmap-panel"}
+    ],
+    "logos": {
+      "small": "images/icon-small.png",
+      "large": "images/icon-large.png"
+    },
+    "screenshots": [
+      {"name": "# of commits", "path": "images/screenshot1.png"},
+      {"name": "Temperature", "path": "images/screenshot2.png"}
+    ],
+    "version": "0.0.1",
+    "updated": "2016-11-01"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "3.x.x",
+    "plugins": [ ]
+  }
+}

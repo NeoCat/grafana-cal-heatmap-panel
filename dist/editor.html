@@ -1,0 +1,46 @@
+<div class="section gf-form-group">
+
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Domain</label>
+    <div class="gf-form-select-wrapper max-width-8">
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in ['auto', 'month', 'day', 'hour']" ng-change="ctrl.render()"></select>
+    </div>
+
+    <label class="gf-form-label width-10">Sub domain</label>
+    <div class="gf-form-select-wrapper max-width-8">
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in ['auto', 'week', 'x_week', 'day', 'x_day', 'hour', 'x_hour', 'min', 'x_min']" ng-change="ctrl.render()"></select>
+    </div>
+  </div>
+
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Col limit</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.colLimit" ng-change="ctrl.render()" ng-model-onblur>
+
+    <label class="gf-form-label width-10">Row limit</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.rowLimit" ng-change="ctrl.render()" ng-model-onblur>
+  </div>
+
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Cell size</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.cellSize" ng-change="ctrl.render()" ng-model-onblur>
+
+    <label class="gf-form-label width-10">Cell padding</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.cellPadding" ng-change="ctrl.render()" ng-model-onblur>
+
+    <label class="gf-form-label width-10">Cell radius</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.cellRadius" ng-change="ctrl.render()" ng-model-onblur>
+  </div>
+
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Legend</label>
+    <input class="gf-form-input max-width-26" ng-model="ctrl.panel.config.legendStr" ng-change="ctrl.render()" ng-model-onblur>
+
+    <label class="gf-form-label width-10">Colors (min:max)</label>
+    <spectrum-picker class="gf-form-input width-4" ng-model="ctrl.panel.config.legendColors.min" ng-change="ctrl.render()" ></spectrum-picker>
+    <spectrum-picker class="gf-form-input width-4" ng-model="ctrl.panel.config.legendColors.max" ng-change="ctrl.render()" ></spectrum-picker>
+
+    <gf-form-switch class="gf-form" label="Show legend" label-class="width-8" checked="ctrl.panel.config.displayLegend" on-change="ctrl.render()"></gf-form-switch>
+
+  </div>
+
+</div>

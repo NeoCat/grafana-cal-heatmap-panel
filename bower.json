@@ -1,0 +1,23 @@
+{
+  "name": "neocat-cal-heatmap-panel",
+  "description": "Cal-HeatMap Panel for Grafana",
+  "main": "src/module.js",
+  "authors": [
+    "NeoCat"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "heatmap",
+    "calendar",
+    "grafana",
+    "panel"
+  ],
+  "homepage": "http://github.com/NeoCat/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
