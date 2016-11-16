@@ -70,16 +70,8 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
 
           var _this2 = _possibleConstructorReturn(this, (CalHeatMapCtrl.__proto__ || Object.getPrototypeOf(CalHeatMapCtrl)).call(this, $scope, $injector));
 
-          var subDomains = {
-            'auto': ['auto'],
-            'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
-            'day': ['auto', 'hour', 'x_hour'],
-            'hour': ['auto', 'min', 'x_min']
-          };
           var panelDefaults = {
             datasource: null,
-            subDomains: subDomains,
-            domains: Object.keys(subDomains),
             config: {
               animationDuration: 0,
               domain: 'auto',
@@ -167,8 +159,16 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
           value: function onRender() {
             if (!this.seriesList || !this.seriesList[0]) return;
 
-            var subDomains = this.panel.subDomains[this.panel.config.domain];
-            if (subDomains.indexOf(this.panel.config.subDomain) < 0) this.panel.config.subDomain = 'auto';
+            var subDomains = {
+              'auto': ['auto'],
+              'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
+              'day': ['auto', 'hour', 'x_hour'],
+              'hour': ['auto', 'min', 'x_min']
+            };
+            console.log(this.panel.config.domain);
+            var cand = subDomains[this.panel.config.domain];
+            if (!cand || cand.indexOf(this.panel.config.subDomain) < 0) this.panel.config.subDomain = 'auto';
+            console.log([this.panel.config.subDomain]);
 
             var elem = this.element.find(".cal-heatmap-panel")[0];
             var _this = this;

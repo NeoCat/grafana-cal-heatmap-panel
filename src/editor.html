@@ -1,18 +1,24 @@
-<div class="section gf-form-group">
-
+<div class="section gf-form-group" ng-init="
+domains = ['auto', 'month', 'day', 'hour'];
+subDomains = {
+  'auto':  ['auto'],
+  'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
+  'day':   ['auto', 'hour', 'x_hour'],
+  'hour':  ['auto', 'min', 'x_min']
+}">
   <div class="gf-form">
     <label class="gf-form-label width-10">Domain
       <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'Primary unit to group data.<br>Choose auto to select based on the time range.'"></i>
     </label>
     <div class="gf-form-select-wrapper max-width-8">
-      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in ctrl.panel.domains" ng-change="ctrl.render()"></select>
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in domains" ng-change="ctrl.render()"></select>
     </div>
 
     <label class="gf-form-label width-10">Sub domain
       <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'Secondary unit to group data.<br>Choose auto to select based on the domain.'"></i>
     </label>
     <div class="gf-form-select-wrapper max-width-8">
-      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in ctrl.panel.subDomains[ctrl.panel.config.domain]" ng-change="ctrl.render()"></select>
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in subDomains[ctrl.panel.config.domain]" ng-change="ctrl.render()"></select>
     </div>
 
     <gf-form-switch class="gf-form" label="Vertical orientation" label-class="width-12" checked="ctrl.panel.config.verticalOrientation" on-change="ctrl.render()"></gf-form-switch>

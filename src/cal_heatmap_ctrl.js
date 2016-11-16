@@ -8,16 +8,8 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
   constructor($scope, $element, $injector) {
     super($scope, $injector);
 
-    var subDomains = {
-      'auto':  ['auto'],
-      'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
-      'day':   ['auto', 'hour', 'x_hour'],
-      'hour':  ['auto', 'min', 'x_min']
-    };
     var panelDefaults = {
       datasource: null,
-      subDomains: subDomains,
-      domains: Object.keys(subDomains),
       config: {
 	animationDuration: 0,
         domain: 'auto',
@@ -100,9 +92,17 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     if (!this.seriesList || !this.seriesList[0])
       return;
 
-    var subDomains = this.panel.subDomains[this.panel.config.domain];
-    if (subDomains.indexOf(this.panel.config.subDomain) < 0)
+    var subDomains = {
+      'auto':  ['auto'],
+      'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
+      'day':   ['auto', 'hour', 'x_hour'],
+      'hour':  ['auto', 'min', 'x_min']
+    };
+    console.log(this.panel.config.domain);
+    var cand = subDomains[this.panel.config.domain];
+    if (!cand || cand.indexOf(this.panel.config.subDomain) < 0)
       this.panel.config.subDomain = 'auto';
+    console.log([this.panel.config.subDomain]);
 
     var elem = this.element.find(".cal-heatmap-panel")[0];
     var _this = this;
