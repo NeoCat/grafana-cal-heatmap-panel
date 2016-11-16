@@ -1,23 +1,30 @@
 <div class="section gf-form-group">
 
   <div class="gf-form">
-    <label class="gf-form-label width-10">Domain</label>
+    <label class="gf-form-label width-10">Domain
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'Primary unit to group data.<br>Choose auto to select based on the time range.'"></i>
+    </label>
     <div class="gf-form-select-wrapper max-width-8">
       <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in ctrl.panel.domains" ng-change="ctrl.render()"></select>
     </div>
-    <input class="gf-form-input max-width-10" ng-model="domains" ng-model-onblur>
 
-    <label class="gf-form-label width-10">Sub domain</label>
+    <label class="gf-form-label width-10">Sub domain
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'Secondary unit to group data.<br>Choose auto to select based on the domain.'"></i>
+    </label>
     <div class="gf-form-select-wrapper max-width-8">
       <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in ctrl.panel.subDomains[ctrl.panel.config.domain]" ng-change="ctrl.render()"></select>
     </div>
   </div>
 
   <div class="gf-form">
-    <label class="gf-form-label width-10">Col limit</label>
+    <label class="gf-form-label width-10">Col limit
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'The numbers of columns to split domain dates into.'"></i>
+    </label>
     <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.colLimit" ng-change="ctrl.render()" ng-model-onblur>
 
-    <label class="gf-form-label width-10">Row limit</label>
+    <label class="gf-form-label width-10">Row limit
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'The numbers of rows to split domain dates into.<br>Ignored if Col limit is specified.'"></i>
+    </label>
     <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.rowLimit" ng-change="ctrl.render()" ng-model-onblur>
   </div>
 
@@ -33,7 +40,9 @@
   </div>
 
   <div class="gf-form">
-    <label class="gf-form-label width-10">Legend</label>
+    <label class="gf-form-label width-10">Thresholds
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'Thresholds to split data into colors.<br>10,20,30 will produce 4 colors for <10(color=min), 10:20, 20:30, and >=30(color=max).'"></i>
+    </label>
     <input class="gf-form-input max-width-26" ng-model="ctrl.panel.config.legendStr" ng-change="ctrl.render()" ng-model-onblur>
 
     <label class="gf-form-label width-10">Colors (min:max)</label>
