@@ -84,6 +84,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
               animationDuration: 0,
               domain: 'auto',
               subDomain: 'auto',
+              verticalOrientation: false,
               colLimit: null,
               rowLimit: null,
               cellSize: 10,
@@ -189,6 +190,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
               config.legend = config.legendStr ? config.legendStr.split(/\s*,\s*/).map(function (x) {
                 return parseFloat(x);
               }) : null;
+              config.label.position = config.verticalOrientation ? 'left' : 'bottom';
 
               if (config.domain == 'auto') {
                 config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";

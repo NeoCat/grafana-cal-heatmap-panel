@@ -22,6 +22,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
 	animationDuration: 0,
         domain: 'auto',
         subDomain: 'auto',
+        verticalOrientation: false,
         colLimit: null,
         rowLimit: null,
         cellSize: 10,
@@ -122,6 +123,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       config.data = data;
       config.legend = config.legendStr ?
         config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null
+      config.label.position = config.verticalOrientation ? 'left' : 'bottom';
 
       if (config.domain == 'auto') {
         config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
