@@ -157,7 +157,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
         }, {
           key: 'onRender',
           value: function onRender() {
-            if (!this.seriesList || !this.seriesList[0]) return;
+            if (!this.seriesList || !this.seriesList[0]) this.seriesList = [{ "datapoints": [] }];
 
             var subDomains = {
               'auto': ['auto'],
@@ -165,10 +165,8 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
               'day': ['auto', 'hour', 'x_hour'],
               'hour': ['auto', 'min', 'x_min']
             };
-            console.log(this.panel.config.domain);
             var cand = subDomains[this.panel.config.domain];
             if (!cand || cand.indexOf(this.panel.config.subDomain) < 0) this.panel.config.subDomain = 'auto';
-            console.log([this.panel.config.subDomain]);
 
             var elem = this.element.find(".cal-heatmap-panel")[0];
             var _this = this;
