@@ -20,27 +20,27 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       domains: Object.keys(subDomains),
       config: {
 	animationDuration: 0,
-	domain: 'auto',
-	subDomain: 'auto',
-	colLimit: null,
-	rowLimit: null,
-	cellSize: 10,
-	cellPadding: 2,
-	cellRadius: 0,
-	domainGutter: 2,
-	label: {
-	  position: 'bottom',
-	  rotate: 'null',
-	  width: 60,
-	},
-	legendStr: '10,20,30,40',
-	legendColors: {
-	  min: "#666",
-	  max: "steelblue",
-	  empty: "#222",
-	  base: "transparent",
-	},
-	displayLegend: true,
+        domain: 'auto',
+        subDomain: 'auto',
+        colLimit: null,
+        rowLimit: null,
+        cellSize: 10,
+        cellPadding: 2,
+        cellRadius: 0,
+        domainGutter: 2,
+        label: {
+          position: 'bottom',
+          rotate: 'null',
+          width: 60,
+        },
+        legendStr: '10,20,30,40',
+        legendColors: {
+          min: "#666",
+          max: "steelblue",
+          empty: "#222",
+          base: "transparent",
+        },
+        displayLegend: true,
       },
     };
 
@@ -53,7 +53,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.events.on('data-error', this.onDataError.bind(this));
     this.events.on('data-snapshot-load', this.onDataSnapshotLoad.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
-}
+  }
 
   seriesHandler(seriesData, index) {
     var datapoints = seriesData.datapoints;
@@ -77,8 +77,8 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
 
   onInitEditMode() {
     this.addEditorTab('Options',
-		      'public/plugins/neocat-cal-heatmap-panel/editor.html',
-		      2);
+                      'public/plugins/neocat-cal-heatmap-panel/editor.html',
+                      2);
   }
 
   onDataSnapshotLoad(snapshotData) {
@@ -109,7 +109,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       var data = {};
       var points = _this.seriesList[0].datapoints;
       for (var i = 0; i < points.length; i++) {
-	data[points[i][1] / 1000] = points[i][0];
+        data[points[i][1] / 1000] = points[i][0];
       }
 
       var from = moment.utc(_this.range.from);
@@ -121,24 +121,26 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       config.itemSelector = elem;
       config.data = data;
       config.legend = config.legendStr ?
-	config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null
+        config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null
 
-      if (config.domain == 'auto')
-	config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
-      if (config.subDomain == 'auto')
-	delete config.subDomain;
+      if (config.domain == 'auto') {
+        config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
+      }
+      if (config.subDomain == 'auto') {
+        delete config.subDomain;
+      }
       config.start = moment.utc(_this.range.from).toDate();
       if (config.domain == 'month') {
-	config.range = to.diff(from, "months") + 1;
-	config.domainLabelFormat = '%y/%m';
+        config.range = to.diff(from, "months") + 1;
+        config.domainLabelFormat = '%y/%m';
       }
       else if (config.domain == 'day') {
-	config.range = days;
-	config.domainLabelFormat = '%m/%d';
+        config.range = days;
+        config.domainLabelFormat = '%m/%d';
       }
       else if (config.domain == 'hour') {
-	config.range = to.diff(from, "hours") + 1;;
-	config.domainLabelFormat = '%d %H:%M';
+        config.range = to.diff(from, "hours") + 1;;
+        config.domainLabelFormat = '%d %H:%M';
       }
       config.range = Math.min(config.range, 60); // avoid browser hang
 
@@ -147,11 +149,11 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
 
     if (this.cal) {
       try {
-	this.cal.destroy(update);
+        this.cal.destroy(update);
       } catch (e) {
-	console.log("Destroy failed: " + e);
-	elem.innerHTML = '';
-	update();
+        console.log("Destroy failed: " + e);
+        elem.innerHTML = '';
+        update();
       }
     } else {
       update();
