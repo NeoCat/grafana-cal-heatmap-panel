@@ -3,12 +3,13 @@
   <div class="gf-form">
     <label class="gf-form-label width-10">Domain</label>
     <div class="gf-form-select-wrapper max-width-8">
-      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in ['auto', 'month', 'day', 'hour']" ng-change="ctrl.render()"></select>
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.domain" ng-options="t for t in ctrl.panel.domains" ng-change="ctrl.render()"></select>
     </div>
+    <input class="gf-form-input max-width-10" ng-model="domains" ng-model-onblur>
 
     <label class="gf-form-label width-10">Sub domain</label>
     <div class="gf-form-select-wrapper max-width-8">
-      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in ['auto', 'week', 'x_week', 'day', 'x_day', 'hour', 'x_hour', 'min', 'x_min']" ng-change="ctrl.render()"></select>
+      <select class="input-small gf-form-input" ng-model="ctrl.panel.config.subDomain" ng-options="t for t in ctrl.panel.subDomains[ctrl.panel.config.domain]" ng-change="ctrl.render()"></select>
     </div>
   </div>
 

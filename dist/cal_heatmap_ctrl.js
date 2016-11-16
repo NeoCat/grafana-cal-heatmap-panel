@@ -70,8 +70,16 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
 
           var _this2 = _possibleConstructorReturn(this, (CalHeatMapCtrl.__proto__ || Object.getPrototypeOf(CalHeatMapCtrl)).call(this, $scope, $injector));
 
+          var subDomains = {
+            'auto': ['auto'],
+            'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
+            'day': ['auto', 'hour', 'x_hour'],
+            'hour': ['auto', 'min', 'x_min']
+          };
           var panelDefaults = {
             datasource: null,
+            subDomains: subDomains,
+            domains: Object.keys(subDomains),
             config: {
               animationDuration: 0,
               domain: 'auto',
@@ -158,6 +166,9 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
           value: function onRender() {
             if (!this.seriesList || !this.seriesList[0]) return;
 
+            var subDomains = this.panel.subDomains[this.panel.config.domain];
+            if (subDomains.indexOf(this.panel.config.subDomain) < 0) this.panel.config.subDomain = 'auto';
+
             var elem = this.element.find(".cal-heatmap-panel")[0];
             var _this = this;
             var update = function update() {
@@ -179,8 +190,12 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
                 return parseFloat(x);
               }) : null;
 
-              if (config.domain == 'auto') config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
-              if (config.subDomain == 'auto') delete config.subDomain;
+              if (config.domain == 'auto') {
+                config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
+              }
+              if (config.subDomain == 'auto') {
+                delete config.subDomain;
+              }
               config.start = moment.utc(_this.range.from).toDate();
               if (config.domain == 'month') {
                 config.range = to.diff(from, "months") + 1;
