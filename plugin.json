@@ -21,8 +21,8 @@
       {"name": "# of commits", "path": "images/screenshot1.png"},
       {"name": "Temperature", "path": "images/screenshot2.png"}
     ],
-    "version": "0.0.1",
-    "updated": "2016-11-01"
+    "version": "0.0.2",
+    "updated": "2016-11-17"
   },
 
   "dependencies": {
