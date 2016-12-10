@@ -210,7 +210,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
 
             var subDomains = {
               'auto': ['auto'],
-              'month': ['auto', 'week', 'x_week', 'day', 'x_day'],
+              'month': ['auto', 'day', 'x_day', 'week', 'x_week'],
               'day': ['auto', 'hour', 'x_hour'],
               'hour': ['auto', 'min', 'x_min']
             };
@@ -245,13 +245,13 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
               }
               config.start = moment.utc(this.range.from).toDate();
               if (config.domain == 'month') {
-                config.range = to.diff(from, "months") + 1;
+                config.range = moment.utc(to.format('YYYY-MM')).diff(moment.utc(from.format('YYYY-MM')), "months") + 1;
                 config.domainLabelFormat = '%y/%m';
               } else if (config.domain == 'day') {
-                config.range = days;
+                config.range = moment.utc(to.format('YYYY-MM-DD')).diff(moment.utc(from.format('YYYY-MM-DD')), "days") + 1;
                 config.domainLabelFormat = '%m/%d';
               } else if (config.domain == 'hour') {
-                config.range = to.diff(from, "hours") + 1;;
+                config.range = moment.utc(to.format('YYYY-MM-DD HH:00')).diff(moment.utc(from.format('YYYY-MM-DD HH:00')), "hours") + 1;
                 config.domainLabelFormat = '%d %H:%M';
               }
               config.range = Math.min(config.range, 100); // avoid browser hang
