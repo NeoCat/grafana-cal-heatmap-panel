@@ -223,12 +223,14 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
 
               var data = {};
               var points = this.seriesList[0].datapoints;
+              // Cal-HeatMap always uses browser timezone
+              var tzOffset = this.dashboard.getTimezone() == 'utc' ? new Date().getTimezoneOffset() * 60 : 0;
               for (var i = 0; i < points.length; i++) {
-                data[points[i][1] / 1000] = points[i][0];
+                data[points[i][1] / 1000 + tzOffset] = points[i][0];
               }
 
-              var from = moment.utc(this.range.from);
-              var to = moment.utc(this.range.to);
+              var from = moment.utc(this.range.from).utcOffset(tzOffset / 60, true);
+              var to = moment.utc(this.range.to).utcOffset(tzOffset / 60, true);
               var days = to.diff(from, "days") + 1;
               var cal = this.cal = new CalHeatMap();
 
@@ -243,15 +245,15 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
               if (config.subDomain == 'auto') {
                 delete config.subDomain;
               }
-              config.start = moment.utc(this.range.from).toDate();
+              config.start = moment(this.range.from).toDate();
               if (config.domain == 'month') {
-                config.range = moment.utc(to.format('YYYY-MM')).diff(moment.utc(from.format('YYYY-MM')), "months") + 1;
+                config.range = moment(to.format('YYYY-MM')).diff(moment(from.format('YYYY-MM')), "months") + 1;
                 config.domainLabelFormat = '%y/%m';
               } else if (config.domain == 'day') {
-                config.range = moment.utc(to.format('YYYY-MM-DD')).diff(moment.utc(from.format('YYYY-MM-DD')), "days") + 1;
+                config.range = moment(to.format('YYYY-MM-DD')).diff(moment(from.format('YYYY-MM-DD')), "days") + 1;
                 config.domainLabelFormat = '%m/%d';
               } else if (config.domain == 'hour') {
-                config.range = moment.utc(to.format('YYYY-MM-DD HH:00')).diff(moment.utc(from.format('YYYY-MM-DD HH:00')), "hours") + 1;
+                config.range = moment(to.format('YYYY-MM-DD HH:00')).diff(moment(from.format('YYYY-MM-DD HH:00')), "hours") + 1;
                 config.domainLabelFormat = '%d %H:%M';
               }
               config.range = Math.min(config.range, 100); // avoid browser hang
