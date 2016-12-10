@@ -56,9 +56,13 @@ subDomains = {
     <label class="gf-form-label width-10">Colors (min:max)</label>
     <spectrum-picker class="gf-form-input width-4" ng-model="ctrl.panel.config.legendColors.min" ng-change="ctrl.render()" ></spectrum-picker>
     <spectrum-picker class="gf-form-input width-4" ng-model="ctrl.panel.config.legendColors.max" ng-change="ctrl.render()" ></spectrum-picker>
+  </div>
 
-    <gf-form-switch class="gf-form" label="Show legend" label-class="width-8" checked="ctrl.panel.config.displayLegend" on-change="ctrl.render()"></gf-form-switch>
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Empty color</label>
+    <spectrum-picker class="gf-form-input width-8" ng-model="ctrl.panel.config.legendColors.empty" ng-change="ctrl.render()" ></spectrum-picker>
 
+    <gf-form-switch class="gf-form" label="Show legend" label-class="width-10" checked="ctrl.panel.config.displayLegend" on-change="ctrl.render()"></gf-form-switch>
   </div>
 
 </div>
