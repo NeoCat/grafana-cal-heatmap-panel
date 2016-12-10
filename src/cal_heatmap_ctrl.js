@@ -26,7 +26,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
           rotate: 'null',
           width: 60,
         },
-        legendStr: '10,20,30,40',
+        legendStr: '',
         legendColors: {
           min: "#666",
           max: "steelblue",
@@ -68,6 +68,55 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     return series;
   }
 
+  calcThresholds(data, subDomain) {
+    var cells = {}; // emulate Cal-HeatMap's cell splitter
+    var unitLen = {};
+    var tzOffset = (new Date()).getTimezoneOffset() * 60;
+
+    var to_i;
+    if (subDomain == 'week')
+      to_i = t => t - t % (24*60*60) - (new Date(t * 1000)).getDay() * (24*60*60);
+    else if (subDomain == 'day')
+      to_i = t => t - t % (24*60*60);
+    else if (subDomain == 'hour')
+      to_i = t => t - t % (60*60);
+    else if (subDomain == 'min')
+      to_i = t => t - t % 60;
+    else
+      throw "Invalid subDomain in calcThresholds()";
+
+    for (var x in data) {
+      var y = parseFloat(data[x]);
+      if (isNaN(y))
+	continue;
+      var i = to_i(parseInt(x) + tzOffset);
+      if (cells[i])
+	cells[i] += y;
+      else
+	cells[i] = y;
+    }
+
+    var [count, sum, sumsq, min, max] = [0, 0, 0, Infinity, -Infinity];
+    for (var x in cells) {
+      var y = parseFloat(cells[x]);
+      if (isNaN(y))
+	continue;
+      count++;
+      sum += y;
+      sumsq += y * y;
+      min = Math.min(min, y);
+      max = Math.max(max, y);
+    }
+    var avg = sum / count;
+    var sd = Math.sqrt((sumsq - avg*avg) / count);
+    var thresh = [];
+    min = Math.max(min, avg - sd*1.5);
+    max = Math.min(max, avg + sd*1.5);
+    for (var i = 0; i < 9; i++)
+      thresh[i] = min + (max - min) / 8 * i;
+    return thresh;
+  }
+
   onInitEditMode() {
     this.addEditorTab('Options',
                       'public/plugins/neocat-cal-heatmap-panel/editor.html',
@@ -103,24 +152,23 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       this.panel.config.subDomain = 'auto';
 
     var elem = this.element.find(".cal-heatmap-panel")[0];
-    var _this = this;
     var update = function() {
+      if (!this.range) return;
+
       var data = {};
-      var points = _this.seriesList[0].datapoints;
+      var points = this.seriesList[0].datapoints;
       for (var i = 0; i < points.length; i++) {
         data[points[i][1] / 1000] = points[i][0];
       }
 
-      var from = moment.utc(_this.range.from);
-      var to = moment.utc(_this.range.to);
+      var from = moment.utc(this.range.from);
+      var to = moment.utc(this.range.to);
       var days = to.diff(from, "days") + 1;
-      var cal = _this.cal = new CalHeatMap();
+      var cal = this.cal = new CalHeatMap();
 
-      var config = angular.copy(_this.panel.config)
+      var config = angular.copy(this.panel.config)
       config.itemSelector = elem;
       config.data = data;
-      config.legend = config.legendStr ?
-        config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null
       config.label.position = config.verticalOrientation ? 'left' : 'bottom';
 
       if (config.domain == 'auto') {
@@ -129,7 +177,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       if (config.subDomain == 'auto') {
         delete config.subDomain;
       }
-      config.start = moment.utc(_this.range.from).toDate();
+      config.start = moment.utc(this.range.from).toDate();
       if (config.domain == 'month') {
         config.range = to.diff(from, "months") + 1;
         config.domainLabelFormat = '%y/%m';
@@ -142,10 +190,19 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
         config.range = to.diff(from, "hours") + 1;;
         config.domainLabelFormat = '%d %H:%M';
       }
-      config.range = Math.min(config.range, 60); // avoid browser hang
+      config.range = Math.min(config.range, 100); // avoid browser hang
 
-      _this.cal.init(config);
-    };
+      if (!config.legendStr || config.legendStr == 'auto') {
+	var subDomain = config.subDomain ?
+	    config.subDomain.replace('x_', '') : subDomains[config.domain][1];
+	config.legend = this.calcThresholds(data, subDomain);
+      } else {
+        config.legend = config.legendStr ?
+          config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null;
+      }
+
+      this.cal.init(config);
+    }.bind(this);
 
     if (this.cal) {
       try {
