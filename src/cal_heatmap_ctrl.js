@@ -11,7 +11,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     var panelDefaults = {
       datasource: null,
       config: {
-	animationDuration: 0,
+        animationDuration: 0,
         domain: 'auto',
         subDomain: 'auto',
         verticalOrientation: false,
@@ -88,19 +88,19 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     for (var x in data) {
       var y = parseFloat(data[x]);
       if (isNaN(y))
-	continue;
+        continue;
       var i = to_i(parseInt(x) + tzOffset);
       if (cells[i])
-	cells[i] += y;
+        cells[i] += y;
       else
-	cells[i] = y;
+        cells[i] = y;
     }
 
     var [count, sum, sumsq, min, max] = [0, 0, 0, Infinity, -Infinity];
     for (var x in cells) {
       var y = parseFloat(cells[x]);
       if (isNaN(y))
-	continue;
+        continue;
       count++;
       sum += y;
       sumsq += y * y;
@@ -180,25 +180,25 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       config.start = moment.utc(this.range.from).toDate();
       if (config.domain == 'month') {
         config.range = moment.utc(to.format('YYYY-MM')).diff(
-	  moment.utc(from.format('YYYY-MM')), "months") + 1;
+          moment.utc(from.format('YYYY-MM')), "months") + 1;
         config.domainLabelFormat = '%y/%m';
       }
       else if (config.domain == 'day') {
         config.range = moment.utc(to.format('YYYY-MM-DD')).diff(
-	  moment.utc(from.format('YYYY-MM-DD')), "days") + 1;
+          moment.utc(from.format('YYYY-MM-DD')), "days") + 1;
         config.domainLabelFormat = '%m/%d';
       }
       else if (config.domain == 'hour') {
         config.range = moment.utc(to.format('YYYY-MM-DD HH:00')).diff(
-	  moment.utc(from.format('YYYY-MM-DD HH:00')), "hours") + 1;
+          moment.utc(from.format('YYYY-MM-DD HH:00')), "hours") + 1;
         config.domainLabelFormat = '%d %H:%M';
       }
       config.range = Math.min(config.range, 100); // avoid browser hang
 
       if (!config.legendStr || config.legendStr == 'auto') {
-	var subDomain = config.subDomain ?
-	    config.subDomain.replace('x_', '') : subDomains[config.domain][1];
-	config.legend = this.calcThresholds(data, subDomain);
+        var subDomain = config.subDomain ?
+            config.subDomain.replace('x_', '') : subDomains[config.domain][1];
+        config.legend = this.calcThresholds(data, subDomain);
       } else {
         config.legend = config.legendStr ?
           config.legendStr.split(/\s*,\s*/).map(x => parseFloat(x)) : null;
