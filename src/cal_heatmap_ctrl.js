@@ -158,14 +158,14 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       var data = {};
       var points = this.seriesList[0].datapoints;
       // Cal-HeatMap always uses browser timezone
-      var tzOffset = this.dashboard.getTimezone() == 'utc' ?
-          (new Date()).getTimezoneOffset() * 60 : 0;
+      var tzOffset = (new Date()).getTimezoneOffset();
+      var offset = this.dashboard.getTimezone() == 'utc' ? tzOffset : 0;
       for (var i = 0; i < points.length; i++) {
-        data[points[i][1] / 1000 + tzOffset] = points[i][0];
+        data[points[i][1] / 1000 + offset*60] = points[i][0];
       }
 
-      var from = moment.utc(this.range.from).utcOffset(tzOffset/60, true);
-      var to = moment.utc(this.range.to).utcOffset(tzOffset/60, true);
+      var from = moment.utc(this.range.from).add(offset, 'minutes').utcOffset(-tzOffset);
+      var to = moment.utc(this.range.to).add(offset, 'minutes').utcOffset(-tzOffset);
       var days = to.diff(from, "days") + 1;
       var cal = this.cal = new CalHeatMap();
 
@@ -180,7 +180,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       if (config.subDomain == 'auto') {
         delete config.subDomain;
       }
-      config.start = moment(this.range.from).toDate();
+      config.start = from.toDate();
       if (config.domain == 'month') {
         config.range = moment(to.format('YYYY-MM')).diff(
           moment(from.format('YYYY-MM')), "months") + 1;
