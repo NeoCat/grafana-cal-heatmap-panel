@@ -65,4 +65,10 @@ subDomains = {
     <gf-form-switch class="gf-form" label="Show legend" label-class="width-10" checked="ctrl.panel.config.displayLegend" on-change="ctrl.render()"></gf-form-switch>
   </div>
 
+  <div class="gf-form">
+    <label class="gf-form-label width-10">Link template
+      <i class="grafana-tip fa fa-question-circle ng-scope" bs-tooltip="'By clicking a cell, jump to this URL.<br>$ts_from and $ts_to in the template are replaced by timestamps interval of the clicked cell.<br>e.g.: /dashboard/db/example?from=$ts_from&to=$ts_to'"></i>
+    </label>
+    <input class="gf-form-input max-width-26" ng-model="ctrl.panel.config.linkTemplate" ng-change="ctrl.render()" ng-model-onblur>
+  </div>
 </div>

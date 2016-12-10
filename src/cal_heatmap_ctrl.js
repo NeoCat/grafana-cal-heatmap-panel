@@ -8,6 +8,13 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
   constructor($scope, $element, $injector) {
     super($scope, $injector);
 
+    this.subDomains = {
+      'auto':  ['auto'],
+      'month': ['auto', 'day', 'x_day', 'week', 'x_week'],
+      'day':   ['auto', 'hour', 'x_hour'],
+      'hour':  ['auto', 'min', 'x_min']
+    };
+
     var panelDefaults = {
       datasource: null,
       config: {
@@ -141,13 +148,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     if (!this.seriesList || !this.seriesList[0])
       this.seriesList = [{"datapoints":[]}];
 
-    var subDomains = {
-      'auto':  ['auto'],
-      'month': ['auto', 'day', 'x_day', 'week', 'x_week'],
-      'day':   ['auto', 'hour', 'x_hour'],
-      'hour':  ['auto', 'min', 'x_min']
-    };
-    var cand = subDomains[this.panel.config.domain];
+    var cand = this.subDomains[this.panel.config.domain];
     if (!cand || cand.indexOf(this.panel.config.subDomain) < 0)
       this.panel.config.subDomain = 'auto';
 
@@ -173,6 +174,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       config.itemSelector = elem;
       config.data = data;
       config.label.position = config.verticalOrientation ? 'left' : 'bottom';
+      config.onClick = this.onClick.bind(this);
 
       if (config.domain == 'auto') {
         config.domain = days > 31 ? "month" : days > 3 ? "day" : "hour";
@@ -200,7 +202,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
 
       if (!config.legendStr || config.legendStr == 'auto') {
         var subDomain = config.subDomain ?
-            config.subDomain.replace('x_', '') : subDomains[config.domain][1];
+            config.subDomain.replace('x_', '') : this.subDomains[config.domain][1];
         config.legend = this.calcThresholds(data, subDomain);
       } else {
         config.legend = config.legendStr ?
@@ -221,6 +223,25 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     } else {
       update();
     }
+  }
+
+  onClick(date, value) {
+    var config = this.cal.options;
+    var template = config.linkTemplate;
+    if (!template) return;
+    var tzOffset = (new Date()).getTimezoneOffset();
+    var offset = this.dashboard.getTimezone() == 'utc' ? tzOffset : 0;
+    var subDomain = config.subDomain ?
+        config.subDomain.replace('x_', '') : this.subDomains[config.domain][1];
+    var duration = {'week': 7*24*60*60, 'day': 24*60*60,
+                    'hour': 60*60, 'minute': 60}[subDomain];
+    console.log([config.subDomain, subDomain, duration]);
+    if (!duration) return;
+    var from = date - offset * 60000;
+    var to = from + duration * 1000;
+    var url = template.replace('$ts_from', from).replace('$ts_to', to);
+    console.log(url);
+    location.href = url;
   }
 
 }
