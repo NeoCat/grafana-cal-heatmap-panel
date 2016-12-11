@@ -71,4 +71,17 @@ subDomains = {
     </label>
     <input class="gf-form-input max-width-26" ng-model="ctrl.panel.config.linkTemplate" ng-change="ctrl.render()" ng-model-onblur>
   </div>
+
+</div>
+
+<div class="section gf-form-group">
+  <h5>Hover info</h5>
+
+  <div class="gf-form">
+    <label class="gf-form-label width-8">Unit</label>
+    <label class="gf-form-label width-8">Singular</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.itemName[0]" ng-change="ctrl.render()" ng-model-onblur>
+    <label class="gf-form-label width-8">Plural</label>
+    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.itemName[1]" ng-change="ctrl.render()" ng-model-onblur>
+  </div>
 </div>

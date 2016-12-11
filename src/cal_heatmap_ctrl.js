@@ -41,6 +41,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
           base: "transparent",
         },
         displayLegend: true,
+        itemName: ['item', 'items'],
       },
     };
 
@@ -200,9 +201,16 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       }
       config.range = Math.min(config.range, 100); // avoid browser hang
 
+      var subDomain = config.subDomain ?
+          config.subDomain.replace('x_', '') : this.subDomains[config.domain][1];
+      config.subDomainDateFormat = {
+        'week': null,
+        'day': '%Y-%m-%d',
+        'hour': '%Y-%m-%d %H:%M',
+        'minute': '%Y-%m-%d %H:%M'
+      }[subDomain];
+
       if (!config.legendStr || config.legendStr == 'auto') {
-        var subDomain = config.subDomain ?
-            config.subDomain.replace('x_', '') : this.subDomains[config.domain][1];
         config.legend = this.calcThresholds(data, subDomain);
       } else {
         config.legend = config.legendStr ?
