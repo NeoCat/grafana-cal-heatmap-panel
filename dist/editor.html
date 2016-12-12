@@ -78,10 +78,11 @@ subDomains = {
   <h5>Hover info</h5>
 
   <div class="gf-form">
-    <label class="gf-form-label width-8">Unit</label>
-    <label class="gf-form-label width-8">Singular</label>
-    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.itemName[0]" ng-change="ctrl.render()" ng-model-onblur>
-    <label class="gf-form-label width-8">Plural</label>
-    <input class="gf-form-input max-width-8" ng-model="ctrl.panel.config.itemName[1]" ng-change="ctrl.render()" ng-model-onblur>
+    <label class="gf-form-label width-5">Unit</label>
+    <div class="gf-form-dropdown-typeahead max-width-15" ng-model="ctrl.panel.config.hoverUnitFormat" dropdown-typeahead2="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem)"></div>
+  </div>
+  <div class="gf-form">
+    <label class="gf-form-label width-5">Decimals</label>
+    <input type="number" class="gf-form-input max-width-5" ng-model="ctrl.panel.config.hoverDecimals" ng-change="ctrl.render()" ng-model-onblur>
   </div>
 </div>

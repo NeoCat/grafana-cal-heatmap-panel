@@ -1,6 +1,7 @@
 import TimeSeries from 'app/core/time_series2';
 import {MetricsPanelCtrl} from 'app/plugins/sdk';
 import moment from 'moment';
+import kbn from 'app/core/utils/kbn';
 import './bower_components/d3/d3.js';
 import './bower_components/cal-heatmap/cal-heatmap.js';
 
@@ -41,12 +42,14 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
           base: "transparent",
         },
         displayLegend: true,
-        itemName: ['item', 'items'],
+        hoverUnitFormat: 'short',
+        hoverDecimals: 2,
       },
     };
 
     _.defaults(this.panel, angular.copy(panelDefaults));
     this.seriesList = [];
+    this.setUnitFormat({value: this.panel.config.hoverUnitFormat || 'short'});
 
     this.element = $element;
     this.events.on('render', this.onRender.bind(this));
@@ -129,6 +132,21 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.addEditorTab('Options',
                       'public/plugins/neocat-cal-heatmap-panel/editor.html',
                       2);
+    this.unitFormats = kbn.getUnitFormats();
+  }
+
+  setUnitFormat(subItem) {
+    this.panel.config.hoverUnitFormat = subItem.value;
+    this.panel.config.itemName = [subItem.value, subItem.value];
+    this.panel.config.subDomainTitleFormat = {
+      empty: '{date}',
+      filled: {format: options =>
+               kbn.valueFormats[options.name](
+                 options.count.replace(',', ''),
+                 this.panel.config.hoverDecimals || 2, null) +
+               ' ' + options.connector + ' ' + options.date}
+    };
+    this.render();
   }
 
   onDataSnapshotLoad(snapshotData) {

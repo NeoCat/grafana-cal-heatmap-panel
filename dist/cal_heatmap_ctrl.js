@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_components/d3/d3.js', './bower_components/cal-heatmap/cal-heatmap.js'], function (_export, _context) {
+System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core/utils/kbn', './bower_components/d3/d3.js', './bower_components/cal-heatmap/cal-heatmap.js'], function (_export, _context) {
   "use strict";
 
-  var TimeSeries, MetricsPanelCtrl, moment, _createClass, CalHeatMapCtrl;
+  var TimeSeries, MetricsPanelCtrl, moment, kbn, _createClass, CalHeatMapCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -42,6 +42,8 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
       MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
     }, function (_moment) {
       moment = _moment.default;
+    }, function (_appCoreUtilsKbn) {
+      kbn = _appCoreUtilsKbn.default;
     }, function (_bower_componentsD3D3Js) {}, function (_bower_componentsCalHeatmapCalHeatmapJs) {}],
     execute: function () {
       _createClass = function () {
@@ -103,12 +105,14 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
                 base: "transparent"
               },
               displayLegend: true,
-              itemName: ['item', 'items']
+              hoverUnitFormat: 'short',
+              hoverDecimals: 2
             }
           };
 
           _.defaults(_this.panel, angular.copy(panelDefaults));
           _this.seriesList = [];
+          _this.setUnitFormat({ value: _this.panel.config.hoverUnitFormat || 'short' });
 
           _this.element = $element;
           _this.events.on('render', _this.onRender.bind(_this));
@@ -193,6 +197,22 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', './bower_
           key: 'onInitEditMode',
           value: function onInitEditMode() {
             this.addEditorTab('Options', 'public/plugins/neocat-cal-heatmap-panel/editor.html', 2);
+            this.unitFormats = kbn.getUnitFormats();
+          }
+        }, {
+          key: 'setUnitFormat',
+          value: function setUnitFormat(subItem) {
+            var _this2 = this;
+
+            this.panel.config.hoverUnitFormat = subItem.value;
+            this.panel.config.itemName = [subItem.value, subItem.value];
+            this.panel.config.subDomainTitleFormat = {
+              empty: '{date}',
+              filled: { format: function format(options) {
+                  return kbn.valueFormats[options.name](options.count.replace(',', ''), _this2.panel.config.hoverDecimals || 2, null) + ' ' + options.connector + ' ' + options.date;
+                } }
+            };
+            this.render();
           }
         }, {
           key: 'onDataSnapshotLoad',
