@@ -135,6 +135,11 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.unitFormats = kbn.getUnitFormats();
   }
 
+  getHoverDecimals() {
+    var decimals = this.panel.config.hoverDecimals;
+    return (decimals != null && decimals !== '') ? decimals : 2;
+  }
+
   setUnitFormat(subItem) {
     this.panel.config.hoverUnitFormat = subItem.value;
     this.panel.config.itemName = [subItem.value, subItem.value];
@@ -143,7 +148,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       filled: {format: options =>
                kbn.valueFormats[options.name](
                  options.count.replace(',', ''),
-                 this.panel.config.hoverDecimals || 2, null) +
+		 this.getHoverDecimals(), null) +
                ' ' + options.connector + ' ' + options.date}
     };
     this.render();

@@ -200,6 +200,12 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.unitFormats = kbn.getUnitFormats();
           }
         }, {
+          key: 'getHoverDecimals',
+          value: function getHoverDecimals() {
+            var decimals = this.panel.config.hoverDecimals;
+            return decimals != null && decimals !== '' ? decimals : 2;
+          }
+        }, {
           key: 'setUnitFormat',
           value: function setUnitFormat(subItem) {
             var _this2 = this;
@@ -209,7 +215,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.panel.config.subDomainTitleFormat = {
               empty: '{date}',
               filled: { format: function format(options) {
-                  return kbn.valueFormats[options.name](options.count.replace(',', ''), _this2.panel.config.hoverDecimals || 2, null) + ' ' + options.connector + ' ' + options.date;
+                  return kbn.valueFormats[options.name](options.count.replace(',', ''), _this2.getHoverDecimals(), null) + ' ' + options.connector + ' ' + options.date;
                 } }
             };
             this.render();
