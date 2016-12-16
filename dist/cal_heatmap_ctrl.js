@@ -200,10 +200,11 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.unitFormats = kbn.getUnitFormats();
           }
         }, {
-          key: 'getHoverDecimals',
-          value: function getHoverDecimals() {
+          key: 'formatValue',
+          value: function formatValue(value, options) {
             var decimals = this.panel.config.hoverDecimals;
-            return decimals != null && decimals !== '' ? decimals : 2;
+            decimals = decimals != null && decimals !== '' ? decimals : 2;
+            return kbn.valueFormats[options.name](String(value).replace(',', ''), decimals, null);
           }
         }, {
           key: 'setUnitFormat',
@@ -215,7 +216,18 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.panel.config.subDomainTitleFormat = {
               empty: '{date}',
               filled: { format: function format(options) {
-                  return kbn.valueFormats[options.name](options.count.replace(',', ''), _this2.getHoverDecimals(), null) + ' ' + options.connector + ' ' + options.date;
+                  return _this2.formatValue(options.count, options) + ' ' + options.connector + ' ' + options.date;
+                } }
+            };
+            this.panel.config.legendTitleFormat = {
+              lower: { format: function format(options) {
+                  return 'less than ' + _this2.formatValue(options.min, options);
+                } },
+              upper: { format: function format(options) {
+                  return 'more than ' + _this2.formatValue(options.max, options);
+                } },
+              inner: { format: function format(options) {
+                  return 'between ' + _this2.formatValue(options.down, options) + ' and ' + _this2.formatValue(options.up, options);
                 } }
             };
             this.render();

@@ -135,9 +135,11 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.unitFormats = kbn.getUnitFormats();
   }
 
-  getHoverDecimals() {
+  formatValue(value, options) {
     var decimals = this.panel.config.hoverDecimals;
-    return (decimals != null && decimals !== '') ? decimals : 2;
+    decimals = (decimals != null && decimals !== '') ? decimals : 2;
+    return kbn.valueFormats[options.name](
+      String(value).replace(',', ''), decimals, null);
   }
 
   setUnitFormat(subItem) {
@@ -146,10 +148,17 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.panel.config.subDomainTitleFormat = {
       empty: '{date}',
       filled: {format: options =>
-               kbn.valueFormats[options.name](
-                 options.count.replace(',', ''),
-		 this.getHoverDecimals(), null) +
+               this.formatValue(options.count, options) +
                ' ' + options.connector + ' ' + options.date}
+    };
+    this.panel.config.legendTitleFormat = {
+      lower: {format: options => 'less than ' +
+              this.formatValue(options.min, options)},
+      upper: {format: options => 'more than ' +
+              this.formatValue(options.max, options)},
+      inner: {format: options => 'between ' +
+              this.formatValue(options.down, options) + ' and ' +
+              this.formatValue(options.up, options)}
     };
     this.render();
   }
