@@ -1,6 +1,6 @@
 {
   "name": "neocat-cal-heatmap-panel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Cal-HeatMap Panel for Grafana",
   "main": "src/module.js",
   "scripts": {
