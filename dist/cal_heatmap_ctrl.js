@@ -250,6 +250,23 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.render(this.seriesList);
           }
         }, {
+          key: 'afterLoadData',
+          value: function afterLoadData(timestamps) {
+            var stdTimezoneOffset = function stdTimezoneOffset(date) {
+              var jan = new Date(date.getFullYear(), 0, 1);
+              var jul = new Date(date.getFullYear(), 6, 1);
+              return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+            };
+            var offset = stdTimezoneOffset(new Date()) * 60;
+            var results = {};
+            for (var timestamp in timestamps) {
+              var value = timestamps[timestamp];
+              timestamp = parseInt(timestamp, 10);
+              results[timestamp + offset] = value;
+            };
+            return results;
+          }
+        }, {
           key: 'onRender',
           value: function onRender() {
             if (!this.seriesList || !this.seriesList[0]) this.seriesList = [{ "datapoints": [] }];
@@ -291,6 +308,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
               if (config.domain == 'month') {
                 config.range = moment(to.format('YYYY-MM')).diff(moment(from.format('YYYY-MM')), "months") + 1;
                 config.domainLabelFormat = '%y/%m';
+                config.afterLoadData = this.afterLoadData;
               } else if (config.domain == 'day') {
                 config.range = moment(to.format('YYYY-MM-DD')).diff(moment(from.format('YYYY-MM-DD')), "days") + 1;
                 config.domainLabelFormat = '%m/%d';
