@@ -177,6 +177,25 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.render(this.seriesList);
   }
 
+  afterLoadData(timestamps) {
+    const stdTimezoneOffset = date => {
+      const jan = new Date(date.getFullYear(), 0, 1);
+      const jul = new Date(date.getFullYear(), 6, 1);
+      return Math.max(
+        jan.getTimezoneOffset(),
+        jul.getTimezoneOffset()
+      );
+    };
+    const offset = stdTimezoneOffset(new Date()) * 60;
+    let results = {};
+    for (let timestamp in timestamps) {
+      const value = timestamps[timestamp];
+      timestamp = parseInt(timestamp, 10);
+      results[timestamp + offset] = value;
+    };
+    return results;
+  }
+
   onRender() {
     if (!this.seriesList || !this.seriesList[0])
       this.seriesList = [{"datapoints":[]}];
@@ -220,6 +239,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
         config.range = moment(to.format('YYYY-MM')).diff(
           moment(from.format('YYYY-MM')), "months") + 1;
         config.domainLabelFormat = '%y/%m';
+        config.afterLoadData = this.afterLoadData;
       }
       else if (config.domain == 'day') {
         config.range = moment(to.format('YYYY-MM-DD')).diff(
