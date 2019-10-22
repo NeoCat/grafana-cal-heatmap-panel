@@ -204,7 +204,9 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     if (!cand || cand.indexOf(this.panel.config.subDomain) < 0)
       this.panel.config.subDomain = 'auto';
 
-    var elem = this.element.find(".cal-heatmap-panel")[0];
+    var selectorElem = this.element.find(".cal-heatmap-panel")[0];
+    var elem = this.element;
+
     var update = function() {
       if (!this.range) return;
 
@@ -223,7 +225,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       var cal = this.cal = new CalHeatMap();
 
       var config = angular.copy(this.panel.config)
-      config.itemSelector = elem;
+      config.itemSelector = selectorElem;
       config.data = data;
       config.label.position = config.verticalOrientation ? 'left' : 'bottom';
       config.onClick = this.onClick.bind(this);
@@ -252,6 +254,28 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
         config.domainLabelFormat = '%d %H:%M';
       }
       config.range = Math.min(config.range, 100); // avoid browser hang
+
+      if (config.cellSize == 0) {
+        let wDiv = 6;
+        let hDiv = 16;
+        
+        if (elem.height() > 250) {
+          hDiv -= 6;
+        }
+        if (config.displayLegend == true) {
+          hDiv += 2.5;
+        }
+        
+        const pWidth  = Math.floor(elem.width() / config.range / wDiv);
+        const pHeight = Math.floor(elem.height() / hDiv);
+        
+        if (pHeight <= 5 || pWidth <= 5 || (config.displayLegend == true && pHeight < 10)) {
+          config.cellSize = 5;
+        }
+        else {
+          config.cellSize = Math.min(pWidth, pHeight);
+        }
+      }
 
       var subDomain = config.subDomain ?
           config.subDomain.replace('x_', '') : this.subDomains[config.domain][1];
