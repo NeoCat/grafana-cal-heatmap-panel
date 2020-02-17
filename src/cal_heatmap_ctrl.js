@@ -300,6 +300,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     var from = date - offset * 60000;
     var to = from + duration * 1000;
     var url = template.replace('$ts_from', from).replace('$ts_to', to);
+	url = this.templateSrv.replaceWithText(url, []);
     console.log(url);
     location.href = url;
   }
