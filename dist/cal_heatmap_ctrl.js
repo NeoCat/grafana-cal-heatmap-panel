@@ -233,6 +233,67 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             this.render();
           }
         }, {
+          key: 'getAutoCellSize',
+          value: function getAutoCellSize(config, elem, subDomain) {
+            if (config.verticalOrientation == true || config.colLimit || config.rowLimit) {
+              // pass since Grafana does not have dynamic heights
+              return 10;
+            }
+
+            var elemWidth = elem.width();
+            var elemHeight = elem.height();
+
+            var widthDomains = 0;
+            var heightDomains = 0;
+
+            switch (config.domain) {
+              case 'month':
+                switch (subDomain) {
+                  case 'week':
+                    heightDomains = 1;
+                    widthDomains = 5;
+                    break;
+                  case 'day':
+                    heightDomains = 7;
+                    widthDomains = 5;
+                }
+                break;
+              case 'day':
+                heightDomains = 6;
+                widthDomains = 4;
+                break;
+              case 'hour':
+                heightDomains = 10;
+                widthDomains = 6;
+            }
+
+            if (config.subDomain && config.subDomain.startsWith('x_')) {
+              var t = heightDomains + 1;
+              heightDomains = widthDomains;
+              widthDomains = t;
+            }
+
+            var totalPadding = config.cellPadding * 6;
+            var widthPxOffset = config.range * totalPadding;
+            var heightPxOffset = totalPadding + heightDomains * 6;
+
+            if (config.displayLegend) {
+              heightPxOffset += 50;
+            }
+
+            widthDomains = config.range * widthDomains + 6;
+            heightDomains = heightDomains + 2;
+
+            var maxPossibleCellWidth = Math.floor((elemWidth - widthPxOffset) / widthDomains);
+            var maxPossibleCellHeight = Math.floor((elemHeight - heightPxOffset) / heightDomains);
+
+            if (config.displayLegend == true && maxPossibleCellHeight < 10 || maxPossibleCellHeight <= 5 || maxPossibleCellWidth <= 5) {
+              return 5;
+            }
+
+            return Math.min(maxPossibleCellWidth, maxPossibleCellHeight);
+          }
+        }, {
           key: 'onDataSnapshotLoad',
           value: function onDataSnapshotLoad(snapshotData) {
             this.onDataReceived(snapshotData.data);
@@ -274,7 +335,9 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
             var cand = this.subDomains[this.panel.config.domain];
             if (!cand || cand.indexOf(this.panel.config.subDomain) < 0) this.panel.config.subDomain = 'auto';
 
-            var elem = this.element.find(".cal-heatmap-panel")[0];
+            var selectorElem = this.element.find(".cal-heatmap-panel")[0];
+            var elem = this.element;
+
             var update = function () {
               if (!this.range) return;
 
@@ -293,7 +356,7 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
               var cal = this.cal = new CalHeatMap();
 
               var config = angular.copy(this.panel.config);
-              config.itemSelector = elem;
+              config.itemSelector = selectorElem;
               config.data = data;
               config.label.position = config.verticalOrientation ? 'left' : 'bottom';
               config.onClick = this.onClick.bind(this);
@@ -325,6 +388,10 @@ System.register(['app/core/time_series2', 'app/plugins/sdk', 'moment', 'app/core
                 'hour': '%Y-%m-%d %H:%M',
                 'minute': '%Y-%m-%d %H:%M'
               }[subDomain];
+
+              if (config.cellSize == null || config.cellSize == 0) {
+                config.cellSize = this.getAutoCellSize(config, elem, subDomain);
+              }
 
               if (!config.legendStr || config.legendStr == 'auto') {
                 config.legend = this.calcThresholds(data, subDomain);

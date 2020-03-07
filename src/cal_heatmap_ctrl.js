@@ -163,6 +163,71 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     this.render();
   }
 
+  getAutoCellSize(config, elem, subDomain) {
+    if (config.verticalOrientation == true || 
+        config.colLimit || 
+        config.rowLimit) {
+      // pass since Grafana does not have dynamic heights
+      return 10; 
+    }
+
+    const elemWidth  = elem.width();
+    const elemHeight = elem.height();
+
+    let widthDomains  = 0;
+    let heightDomains = 0;
+
+    switch (config.domain) {
+      case 'month':
+        switch (subDomain) {
+          case 'week':
+            heightDomains = 1;
+            widthDomains  = 5;
+            break;
+          case 'day':
+            heightDomains = 7;
+            widthDomains  = 5;
+        }
+        break;
+      case 'day':
+        heightDomains = 6;
+        widthDomains  = 4;
+        break;
+      case 'hour':
+        heightDomains = 10;
+        widthDomains  = 6;
+    }
+
+    if (config.subDomain && 
+        config.subDomain.startsWith('x_')) {
+      const t       = heightDomains + 1;
+      heightDomains = widthDomains;
+      widthDomains  = t;
+    }
+
+    let totalPadding   = config.cellPadding * 6;
+    let widthPxOffset  = config.range * totalPadding;
+    let heightPxOffset = totalPadding + (heightDomains * 6);
+
+    if (config.displayLegend) {
+      heightPxOffset += 50;
+    }
+
+    widthDomains = config.range * widthDomains + 6;
+    heightDomains = heightDomains + 2;
+
+    const maxPossibleCellWidth  = Math.floor((elemWidth  - widthPxOffset)  / widthDomains);
+    const maxPossibleCellHeight = Math.floor((elemHeight - heightPxOffset) / heightDomains);
+
+    if ((config.displayLegend == true && maxPossibleCellHeight < 10) ||
+         maxPossibleCellHeight <= 5 || 
+         maxPossibleCellWidth  <= 5) {
+      return 5;
+    }
+
+    return Math.min(maxPossibleCellWidth, maxPossibleCellHeight);
+  }
+
   onDataSnapshotLoad(snapshotData) {
     this.onDataReceived(snapshotData.data);
   }
@@ -204,7 +269,9 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
     if (!cand || cand.indexOf(this.panel.config.subDomain) < 0)
       this.panel.config.subDomain = 'auto';
 
-    var elem = this.element.find(".cal-heatmap-panel")[0];
+    var selectorElem = this.element.find(".cal-heatmap-panel")[0];
+    var elem = this.element;
+
     var update = function() {
       if (!this.range) return;
 
@@ -223,7 +290,7 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
       var cal = this.cal = new CalHeatMap();
 
       var config = angular.copy(this.panel.config)
-      config.itemSelector = elem;
+      config.itemSelector = selectorElem;
       config.data = data;
       config.label.position = config.verticalOrientation ? 'left' : 'bottom';
       config.onClick = this.onClick.bind(this);
@@ -261,6 +328,10 @@ export class CalHeatMapCtrl extends MetricsPanelCtrl {
         'hour': '%Y-%m-%d %H:%M',
         'minute': '%Y-%m-%d %H:%M'
       }[subDomain];
+
+      if (config.cellSize == null || config.cellSize == 0) {
+        config.cellSize = this.getAutoCellSize(config, elem, subDomain);
+      }
 
       if (!config.legendStr || config.legendStr == 'auto') {
         config.legend = this.calcThresholds(data, subDomain);
